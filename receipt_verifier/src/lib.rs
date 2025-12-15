@@ -1,11 +1,12 @@
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use tiny_keccak::{Hasher, Keccak};
-use secp256k1::{Message, Secp256k1};
-use secp256k1::ecdsa::RecoverableSignature;
+use k256::ecdsa::{Signature as KSig, RecoveryId, VerifyingKey};
 use hex::FromHex;
 use thiserror::Error;
 use std::collections::BTreeMap;
+use std::process::{Command, Stdio};
+use std::io::Write;
 
 #[derive(Debug, Error)]
 pub enum VerifyError {
@@ -15,6 +16,7 @@ pub enum VerifyError {
     #[error("address mismatch")] AddressMismatch,
     #[error("policy/consent mismatch")] PolicyConsentMismatch,
     #[error("gateway parse error: {0}")] GatewayParse(String),
+    #[error("prover error: {0}")] Prover(String),
 }
 
 #[derive(Debug, Deserialize, Clone)]
@@ -23,7 +25,7 @@ pub struct Receipt {
     pub rest: serde_json::Value,
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct PublicInputs {
     pub receipt_hash: String,
     pub policy_hash: String,
@@ -40,7 +42,7 @@ pub struct Witness {
     pub anchor_tx_hash: Option<String>,
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Proof {
     pub proof_id: String,
     pub proof: String,
@@ -49,7 +51,7 @@ pub struct Proof {
     pub prover: String,
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct WitnessSummary {
     pub receipt_id: Option<String>,
     pub anchor_tx_hash: Option<String>,
@@ -102,6 +104,15 @@ pub fn personal_hash_keccak(bytes: &[u8]) -> [u8; 32] {
     out
 }
 
+/// Keccak-256 over arbitrary bytes.
+pub fn keccak256(bytes: &[u8]) -> [u8; 32] {
+    let mut k = Keccak::v256();
+    let mut out = [0u8; 32];
+    k.update(bytes);
+    k.finalize(&mut out);
+    out
+}
+
 /// Recover address from a 65-byte signature (r,s,v) over given hash.
 pub fn recover_address(sig_hex: &str, msg_hash: [u8; 32]) -> Result<[u8; 20], VerifyError> {
     let sig_bytes = Vec::from_hex(normalize_hex_even(sig_hex))
@@ -109,19 +120,21 @@ pub fn recover_address(sig_hex: &str, msg_hash: [u8; 32]) -> Result<[u8; 20], Ve
     if sig_bytes.len() != 65 {
         return Err(VerifyError::Sig("expected 65-byte signature".into()));
     }
-    // secp256k1 recovery
-    let rec_id = secp256k1::ecdsa::RecoveryId::from_i32((sig_bytes[64] % 4) as i32)
+    let v = sig_bytes[64];
+    let rec_byte = match v {
+        27 | 28 => v - 27,
+        _ => v % 4,
+    };
+    let rec_id = RecoveryId::from_byte(rec_byte).ok_or_else(|| VerifyError::Sig("bad recovery id".into()))?;
+    let rsig = KSig::from_slice(&sig_bytes[..64])
+        .map_err(|e| VerifyError::Sig(e.to_string()))?
+        ;
+    let vk = VerifyingKey::recover_from_prehash(&msg_hash, &rsig, rec_id)
         .map_err(|e| VerifyError::Sig(e.to_string()))?;
-    let rsig = RecoverableSignature::from_compact(&sig_bytes[..64], rec_id)
-        .map_err(|e| VerifyError::Sig(e.to_string()))?;
-    let msg = Message::from_digest(msg_hash);
-    let secp = Secp256k1::new();
-    let pubkey = secp.recover_ecdsa(&msg, &rsig).map_err(|e| VerifyError::Sig(e.to_string()))?;
-    let pubkey_bytes = pubkey.serialize_uncompressed();
-    // Ethereum address = keccak(pubkey[1..])[12..]
+    let pubkey_bytes = vk.to_encoded_point(false);
     let mut k = Keccak::v256();
     let mut out = [0u8; 32];
-    k.update(&pubkey_bytes[1..]);
+    k.update(&pubkey_bytes.as_bytes()[1..]);
     k.finalize(&mut out);
     let mut addr = [0u8; 20];
     addr.copy_from_slice(&out[12..]);
@@ -136,12 +149,19 @@ pub fn verify_receipt(
     expected_policy_hash: &str,
     expected_consent_hash: &str,
 ) -> Result<(String, [u8; 20]), VerifyError> {
-    let canon = canonical_json(receipt_val);
+    // Strip fields not covered by the signature (receipt_sig, anchor).
+    let mut base = receipt_val.clone();
+    if let Some(obj) = base.as_object_mut() {
+        obj.remove("receipt_sig");
+        obj.remove("anchor");
+    }
+    let canon = canonical_json(&base);
     let canon_str = serde_json::to_string(&canon).map_err(|e| VerifyError::Serde(e.to_string()))?;
     // hash for public signal
     let rcpt_hash = receipt_hash_sha256(&canon);
-    // personal_sign digest for signature recovery (keccak)
-    let digest = personal_hash_keccak(canon_str.as_bytes());
+    // personal_sign digest for signature recovery: keccak(canonical_json) then EIP-191 keccak
+    let digest_bytes = keccak256(canon_str.as_bytes());
+    let digest = personal_hash_keccak(&digest_bytes);
     let addr = recover_address(receipt_sig_hex, digest)?;
     if let Some(exp) = expected_gateway {
         if addr != exp {
@@ -229,4 +249,36 @@ pub fn mock_prove(pub_inputs: &PublicInputs, witness: &Witness) -> Proof {
         },
         prover: "receipt_sig".into(),
     }
+}
+
+/// External prover hook: call command in LUMINAIR_PROVER_CMD with stdin JSON {public_inputs, witness}.
+/// The command must return a JSON Proof on stdout.
+pub fn external_prove(pub_inputs: &PublicInputs, witness: &Witness) -> Result<Proof, VerifyError> {
+    let cmd_str = std::env::var("LUMINAIR_PROVER_CMD")
+        .map_err(|_| VerifyError::Prover("LUMINAIR_PROVER_CMD not set".into()))?;
+    let mut parts = cmd_str.split_whitespace();
+    let bin = parts.next().ok_or_else(|| VerifyError::Prover("empty LUMINAIR_PROVER_CMD".into()))?;
+    let args: Vec<&str> = parts.collect();
+    let mut child = Command::new(bin)
+        .args(args)
+        .stdin(Stdio::piped())
+        .stdout(Stdio::piped())
+        .spawn()
+        .map_err(|e| VerifyError::Prover(e.to_string()))?;
+    if let Some(stdin) = child.stdin.as_mut() {
+        let payload = serde_json::json!({ "public_inputs": pub_inputs, "witness": witness });
+        stdin
+            .write_all(serde_json::to_string(&payload).unwrap().as_bytes())
+            .map_err(|e| VerifyError::Prover(e.to_string()))?;
+    }
+    let output = child.wait_with_output().map_err(|e| VerifyError::Prover(e.to_string()))?;
+    if !output.status.success() {
+        return Err(VerifyError::Prover(format!(
+            "prover failed: {}",
+            String::from_utf8_lossy(&output.stderr)
+        )));
+    }
+    let proof: Proof = serde_json::from_slice(&output.stdout)
+        .map_err(|e| VerifyError::Prover(e.to_string()))?;
+    Ok(proof)
 }

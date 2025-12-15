@@ -12,4 +12,4 @@ tiny-keccak = { version = "2", features = ["keccak"] }
 hex = "0.4"
 thiserror = "1"
 anyhow = "1"
-secp256k1 = { version = "0.28", features = ["recovery"] }
+k256 = { version = "0.13", features = ["ecdsa"] }

@@ -30,11 +30,11 @@ struct Args {
     /// Path to write proof JSON (currently the receipt_sig hook; swap to Stwo later)
     #[arg(long)]
     out_proof: Option<PathBuf>,
-    /// Generate proof via the current hook (receipt_sig)
+    /// Generate proof via the configured hook (receipt_sig or external)
     #[arg(long)]
     prove: bool,
     /// Force stub prover even if a real prover is later wired
-    #[arg(long, default_value_t = true)]
+    #[arg(long, default_value_t = false)]
     stub: bool,
 }
 
@@ -77,8 +77,14 @@ fn main() -> anyhow::Result<()> {
                 println!("saved witness to {}", out.display());
             }
             if args.prove {
-                // Currently uses the receipt_sig hook; swap in real Stwo prover here later.
-                let proof = receipt_verifier::mock_prove(&pub_inputs, &witness);
+                let proof = if !args.stub {
+                    receipt_verifier::external_prove(&pub_inputs, &witness).unwrap_or_else(|e| {
+                        eprintln!("external prover failed or not set: {e}; falling back to receipt_sig");
+                        receipt_verifier::mock_prove(&pub_inputs, &witness)
+                    })
+                } else {
+                    receipt_verifier::mock_prove(&pub_inputs, &witness)
+                };
                 println!("proof:");
                 println!("{}", serde_json::to_string_pretty(&proof)?);
                 if let Some(out) = args.out_proof {

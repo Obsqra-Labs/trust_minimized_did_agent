@@ -1,7 +1,7 @@
 {
-  "receipt_hash": "0x42d4aec42c1fc343813c27f9fadc6b4b132159c8abd46ed59134d2836f059c51",
+  "receipt_hash": "0xd092f2b445efee37528cfe196741328fc625881f26e15b238343387339ae1be5",
   "policy_hash": "0xabababababababababababababababababababababababababababababababab",
   "consent_hash": "0xcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd",
-  "gateway_address": "0xcfdacf524d8eb72fe4cd22f316644fb058a18bb2",
+  "gateway_address": "0x3a66a80ac10721e69b6a9cd56b07282d9a094813",
   "note": "Use these as public signals; feed canonical_receipt + sig as witness"
 }

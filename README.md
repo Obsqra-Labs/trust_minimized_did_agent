@@ -80,7 +80,7 @@ It is intentionally generic: a DID-enabled agent with trust-minimized tool calls
 - DID-enabled, trust-minimized tool calls against a verified MCP gateway (POC).
 - Receipts are signed, locally verified, and packaged for ZK-friendly public inputs.
 - Optional L2 anchoring of receipt hashes for auditability; future path to on-chain constraints/proofs if desired.
-- Agent integration: Claude Desktop can call the toolhost to run governed actions, anchor, and prepare proof artifacts without changing the gateway.
+- Agent integration: Claude Desktop can call the toolhost to run governed actions, anchor, and prepare proof artifacts without changing the gateway (see `CLAUDE_DESKTOP.md`).
 
 ## Starknet anchor (optional)
 - Current contract: `0x072b5c3ff9d759f44350b689037a655842024ec1313db160feae16a3bc0df053` on Sepolia.

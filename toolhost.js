@@ -5,7 +5,7 @@
 // - retrieval.demo@1.0.0: proxy to gateway /mcp/retrieval/query
 // - verify_receipt: GET /verify/receipt/:id and /receipts/:id
 // - anchor_receipt: POST /anchor/l2/:id then refetch receipt
-// - prove_receipt (stub): run cargo verifier to emit public/witness/proof stub
+// - prove_receipt: run cargo verifier to emit public/witness/proof (receipt_sig by default; external prover if configured)
 
 import http from "http";
 import { spawn } from "child_process";

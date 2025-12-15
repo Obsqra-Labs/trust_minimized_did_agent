@@ -1,17 +1,17 @@
 {
-  "proof_id": "proof_42d4aec42c1fc343813c27f9fadc6b4b132159c8abd46ed59134d2836f059c51",
-  "proof": "0022c4c2b7acccc43ce214639ed58c6638a7ce6bc49e1eb84962b3af1e0a153038db9af707d3252cec2f493e146947cbd47c24a030eb9c48ec97ba6f1172b4c01c",
+  "proof_id": "proof_d092f2b445efee37528cfe196741328fc625881f26e15b238343387339ae1be5",
+  "proof": "7e466f98e905d816e2b5623856ac7655c88565e1f774584ac39d29a39d9914503854628dcb9cc2b9b041f06da04cd7062c3e731591df8a58214735021df607cd1b",
   "public_inputs": {
-    "receipt_hash": "0x42d4aec42c1fc343813c27f9fadc6b4b132159c8abd46ed59134d2836f059c51",
+    "receipt_hash": "0xd092f2b445efee37528cfe196741328fc625881f26e15b238343387339ae1be5",
     "policy_hash": "0xabababababababababababababababababababababababababababababababab",
     "consent_hash": "0xcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd",
-    "gateway_address": "0xcfdacf524d8eb72fe4cd22f316644fb058a18bb2",
+    "gateway_address": "0x3a66a80ac10721e69b6a9cd56b07282d9a094813",
     "note": "Use these as public signals; feed canonical_receipt + sig as witness"
   },
   "witness_summary": {
-    "receipt_id": "rcpt_1765773158_4b663825",
-    "anchor_tx_hash": "0x00d713947784f2910cc742cf71295f448acd1748cfcdfe0612b952add663ca91",
-    "canonical_len": 1316
+    "receipt_id": "rcpt_1765774660_a7c344bf",
+    "anchor_tx_hash": "0x04310e122783fb9059c87598b60d2fb982108fc6c364300ff2bfd4ece1f0734a",
+    "canonical_len": 1317
   },
   "prover": "receipt_sig"
 }
