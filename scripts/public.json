@@ -1,0 +1,7 @@
+{
+  "receipt_hash": "0x42d4aec42c1fc343813c27f9fadc6b4b132159c8abd46ed59134d2836f059c51",
+  "policy_hash": "0xabababababababababababababababababababababababababababababababab",
+  "consent_hash": "0xcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd",
+  "gateway_address": "0xcfdacf524d8eb72fe4cd22f316644fb058a18bb2",
+  "note": "Use these as public signals; feed canonical_receipt + sig as witness"
+}

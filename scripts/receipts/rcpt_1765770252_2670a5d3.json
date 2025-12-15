@@ -1,0 +1,26 @@
+{
+  "receipt_type": "action",
+  "receipt_version": "v1",
+  "receipt_id": "rcpt_1765770252_2670a5d3",
+  "did": "did:matchid:demo1",
+  "session_id": "sess_att_1765770252",
+  "tool_id": "payments.demo@1.0.0",
+  "args_hash": "42aec4696a3469cc907d91aa1cc5c83849ad9093837938274dc988dffce11b19",
+  "result_hash": "e5c21366775b591f794890281141f3097ffd17e085afaadaaa24b12cb3c7bb1c",
+  "policy_hash": "0xabababababababababababababababababababababababababababababababab",
+  "consent_snapshot_hash": "0xcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd",
+  "matchain_attestation_ref": "att_1765770252",
+  "timestamp": 1765770252,
+  "nonce": 377256,
+  "external_ref": "demo_external_ref",
+  "raw_args": {
+    "amount": 123,
+    "description": "demo payment"
+  },
+  "raw_result": {
+    "status": "ok",
+    "mock": true,
+    "tool_id": "payments.demo@1.0.0"
+  },
+  "receipt_sig": "e0332261d3b174fb3c913bc4d6fd195ed01ff5f625a0e9a0b7965934e92f05477352f5c36d87643aa3c2b9e5eb6422bdd18ddf7b539859e9b5aad7ee0157c7711b"
+}

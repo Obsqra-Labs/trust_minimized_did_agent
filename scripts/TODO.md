@@ -1,0 +1,6 @@
+- Add MCP host shim (Node/Python) that proxies to http://localhost:4005/mcp/tools/call and retrieval/query, then:
+  - verifies receipt via /verify/receipt/{id}
+  - runs `receipt_verifier` CLI to produce public inputs + (later) proof
+  - optionally calls /anchor/l2/{id} and prints Voyager link
+- Add Stwo circuit integration in `receipt_verifier` (hash gadget + secp256k1 verify) and expose a prover hook.
+- Optionally add a wrapper to post proof hash to the existing Starknet anchor contract.

@@ -1,0 +1,39 @@
+{
+  "receipt_type": "action",
+  "receipt_version": "v1",
+  "receipt_id": "rcpt_1765770455_7390c9a6",
+  "did": "did:matchid:demo1",
+  "session_id": "sess_att_1765770455",
+  "tool_id": "payments.demo@1.0.0",
+  "args_hash": "42aec4696a3469cc907d91aa1cc5c83849ad9093837938274dc988dffce11b19",
+  "result_hash": "e5c21366775b591f794890281141f3097ffd17e085afaadaaa24b12cb3c7bb1c",
+  "policy_hash": "0xabababababababababababababababababababababababababababababababab",
+  "consent_snapshot_hash": "0xcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd",
+  "matchain_attestation_ref": "att_1765770455",
+  "timestamp": 1765770455,
+  "nonce": 719469,
+  "external_ref": "demo_external_ref",
+  "raw_args": {
+    "amount": 123,
+    "description": "demo payment"
+  },
+  "raw_result": {
+    "status": "ok",
+    "mock": true,
+    "tool_id": "payments.demo@1.0.0"
+  },
+  "receipt_sig": "0d28ff0d96e967c3166a252c3bd2ed9ca6eaca2cb7c62f45c5fdc816586b97bc1dc03ef19b9efff2135a931217abdb52de4e496f870299119dc788a4fcd198f41b",
+  "anchor": {
+    "anchor_id": "anchor_rcpt_1765770455_7390c9a6",
+    "timestamp": 1765770455,
+    "receipt_hash": "d215461dec457e07a5707a5acfcb84d3b52539fce22d671bdfb248cc3bb33246",
+    "l2_tx": {
+      "network": "sepolia",
+      "layer": "L2",
+      "tx_hash": "0x06705b5a1b749e1b250739eccdea92b439e860ac68f83a83facff219e2acd0a8",
+      "submitted_at": 1765770455,
+      "contract": "0x072b5c3ff9d759f44350b689037a655842024ec1313db160feae16a3bc0df053",
+      "source": "sncast"
+    }
+  }
+}
