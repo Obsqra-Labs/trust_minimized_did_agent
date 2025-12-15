@@ -40,15 +40,16 @@ It is intentionally generic: a DID-enabled agent with trust-minimized tool calls
 
 ## Fast path for a demo (local-only proofs)
 1) Run the verified MCP gateway (POC) on :4005.
-2) From `scripts/`, run:
+2) (Optional) Set `LUMINAIR_PROVER_CMD` to a prover command that reads `{public_inputs, witness}` JSON on stdin and returns Proof JSON. If unset or failing, the receipt_sig hook is used.
+3) From `scripts/`, run:
    ```bash
    python3 auto_prove.py --mode tool --amount 123 --anchor --gateway auto
    ```
    - Calls governed tool, fetches receipt, optionally anchors to Starknet.
    - Runs Rust verifier: canonical hash + signature check + policy/consent check.
-   - Emits public inputs (`public.json`), witness (`witness.json`), and proof (`proof.json`, currently the receipt signature hook).
-3) Artifacts land in `scripts/receipts/`, `scripts/public.json`, `scripts/witness.json`, `scripts/proof.json`.
-4) Proofs are local-only; on-chain proof verification is not required. You can still anchor the receipt hash to L2 for auditability.
+   - Emits public inputs (`public.json`), witness (`witness.json`), and proof (`proof.json`, receipt_sig by default; external prover if configured).
+4) Artifacts land in `scripts/receipts/`, `scripts/public.json`, `scripts/witness.json`, `scripts/proof.json`.
+5) Proofs are local-only; on-chain proof verification is not required. You can still anchor the receipt hash to L2 for auditability.
 
 ## Components
 - `scripts/auto_prove.py` — one-command E2E: gateway call → optional L2 anchor → verify → public/witness/proof (receipt_sig hook).

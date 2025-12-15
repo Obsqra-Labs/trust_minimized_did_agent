@@ -1,16 +1,16 @@
 {
-  "proof_id": "proof_d092f2b445efee37528cfe196741328fc625881f26e15b238343387339ae1be5",
-  "proof": "7e466f98e905d816e2b5623856ac7655c88565e1f774584ac39d29a39d9914503854628dcb9cc2b9b041f06da04cd7062c3e731591df8a58214735021df607cd1b",
+  "proof_id": "proof_a9154ef5e5691825ff1be2a1da3dabe375263493da745f00e1519279a8af3d56",
+  "proof": "35e2390c20d4c8e74d6ff40a0a437dae927e658578c8a821fdc899a6895c5d3a2eac8f62e57b864d5f9385c8dd63264ade00e2574963dbd90aad57b7d509aba41b",
   "public_inputs": {
-    "receipt_hash": "0xd092f2b445efee37528cfe196741328fc625881f26e15b238343387339ae1be5",
+    "receipt_hash": "0xa9154ef5e5691825ff1be2a1da3dabe375263493da745f00e1519279a8af3d56",
     "policy_hash": "0xabababababababababababababababababababababababababababababababab",
     "consent_hash": "0xcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd",
     "gateway_address": "0x3a66a80ac10721e69b6a9cd56b07282d9a094813",
     "note": "Use these as public signals; feed canonical_receipt + sig as witness"
   },
   "witness_summary": {
-    "receipt_id": "rcpt_1765774660_a7c344bf",
-    "anchor_tx_hash": "0x04310e122783fb9059c87598b60d2fb982108fc6c364300ff2bfd4ece1f0734a",
+    "receipt_id": "rcpt_1765778272_0cbf2a85",
+    "anchor_tx_hash": "0x013391bbfcda292d92e50e65d68468ee4059904ed983061a27fdfa21743ab5c2",
     "canonical_len": 1317
   },
   "prover": "receipt_sig"

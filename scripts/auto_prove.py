@@ -16,10 +16,15 @@ import os
 import subprocess
 import sys
 from pathlib import Path
+from dotenv import load_dotenv
 
 # Reuse helper funcs from host.py
 sys.path.append(str(Path(__file__).parent))
 import host  # type: ignore
+
+# Load env for optional external prover (LUMINAIR_PROVER_CMD)
+load_dotenv()
+LUMI_CMD = os.environ.get("LUMINAIR_PROVER_CMD")
 
 
 def run_gateway_call(mode: str, amount: int, description: str, query: str, datasets, anchor: bool):
@@ -77,6 +82,8 @@ def run_cargo(receipt_path: Path, signature: str, gateway: str, policy_hash: str
         "--out-proof",
         str(out_proof),
     ]
+    if not LUMI_CMD:
+        cmd.append("--stub")
     print("Running verifier CLI:\n", " ".join(cmd))
     subprocess.run(cmd, check=True, cwd=crate_dir)
     return out_public, out_witness, out_proof
