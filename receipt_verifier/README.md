@@ -28,6 +28,7 @@ cargo run -- \
 
 ## External prover (optional)
 - Set `LUMINAIR_PROVER_CMD="your_prover_bin --arg1"`; it must read stdin JSON `{public_inputs, witness}` and write a Proof JSON to stdout. If unset or failing, the CLI/toolhost falls back to `receipt_sig`.
+- Included: `receipt_prover` binary that does this I/O contract (currently wraps `receipt_sig`). Build with `cargo build` and set `LUMINAIR_PROVER_CMD="../receipt_verifier/target/debug/receipt_prover"`.
 
 ## Notes
 - Signature covers the receipt excluding `receipt_sig` and `anchor` fields.

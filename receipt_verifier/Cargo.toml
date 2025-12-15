@@ -13,3 +13,11 @@ hex = "0.4"
 thiserror = "1"
 anyhow = "1"
 k256 = { version = "0.13", features = ["ecdsa"] }
+
+[[bin]]
+name = "receipt_verifier"
+path = "src/main.rs"
+
+[[bin]]
+name = "receipt_prover"
+path = "src/bin/receipt_prover.rs"

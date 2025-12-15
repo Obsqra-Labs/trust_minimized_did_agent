@@ -34,7 +34,7 @@ pub struct PublicInputs {
     pub note: Option<String>,
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Witness {
     pub canonical_receipt: String,
     pub signature_hex: String,
